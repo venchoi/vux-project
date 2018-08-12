@@ -71,7 +71,10 @@ export default {
   mounted () {
     const vm = this
     vm.requestData()
-    this.timer = setInterval(vm.requestData, 10000)
+    if (vm.timer !== 0) {
+      clearInterval(vm.timer)
+    }
+    vm.timer = setInterval(vm.requestData, 10000)
   },
   destroyed() {
     const vm = this

@@ -9,7 +9,7 @@
     </group>
     <div class="actions-container">
       <div class="actions">
-        <x-button type="primary" @click.native="login">登录</x-button>
+        <x-button type="primary" @click.native="login" style="background: #EA3939;color:#fff">登录</x-button>
         <div class="other-ways">
           <div class="forget" @click="navigaTo('/form/forget')">忘记密码</div>
           <div class="register" @click="navigaTo('/form/register')">立即注册</div>

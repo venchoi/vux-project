@@ -11,18 +11,18 @@
         <img slot="right-full-height" :src="imgCodeUrl" @click="changeImg">
       </x-input>
       <x-input title="短信验证码" class="weui-vcode" v-model="mobile_check_code">
-        <x-button slot="right" type="primary" mini @click.native="sendSms">发送验证码</x-button>
+        <x-button slot="right" type="primary" mini @click.native="sendSms" style="background: #EA3939;color:#fff">发送验证码</x-button>
       </x-input>
-      <!-- <x-input v-if="type === 'register'" title="推荐码" type="password" v-model="inivte_code"></x-input> -->
+      <x-input v-if="type === 'register'" title="推荐码" type="password" v-model="inivte_code"></x-input>
       <x-input :title="pswTitle" type="password" v-model="password"></x-input>
     </group>
     <div v-if="type === 'setWithPwd'" class="tips">为了账户安全，请不要设置与登录密码相同的提现密码</div>
     <div class="button-container">
       <div class="button">
-        <x-button type="primary" @click.native="submit">确定</x-button>
+        <x-button type="primary" @click.native="submit" style="background: #EA3939;color:#fff">确定</x-button>
       </div>
     </div>
-    <toast ref="toast" :type="toustType" :time="1500">{{toustTxt}}</toast>
+    <!-- <toast ref="toast" :type="toustType" :time="1500">{{toustTxt}}</toast> -->
   </div>
 </template>
 <script>

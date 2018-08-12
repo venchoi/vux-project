@@ -59,7 +59,7 @@
             <flexbox-item :span="3/5">
               <div class="selector">
                 <div class="input" :class="{active: priceType === 1}" @click="priceType = 1;sellPrice = 0">市价</div>
-                <div class="market-price" :class="{active: priceType === 0}" @click="priceType = 0">限价</div>
+                <div class="market-price" :class="{active: priceType === 0}" @click="priceType = 0;sellPrice = Number(buyStage[0].price)">限价</div>
               </div>
             </flexbox-item>
           </flexbox>

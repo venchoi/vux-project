@@ -125,7 +125,8 @@ export default {
       }],
       codesData: {},
       codes: [],
-      mainTick: {}
+      mainTick: {},
+      timer: 0,
     }
   },
   components: {
@@ -140,10 +141,13 @@ export default {
     const vm = this
     vm.requestMonthData()
     vm.requestMainTick()
-    // setInterval(() => {
-    //   vm.requestMonthData()
-    //   vm.requestMainTick()
-    // }, 10000)
+    if (vm.timer !== 0) {
+      clearInterval(vm.timer)
+    }
+    this.timer = setInterval(() => {
+      vm.requestMonthData()
+      vm.requestMainTick()
+    }, 10000)
   },
   methods: {
     requestMainTick () {
@@ -201,6 +205,10 @@ export default {
     navigateTo (url) {
       this.$router.push(url)
     }
+  },
+  beforeDestroy(){
+    const timer = this.timer
+    clearInterval(timer)
   }
 }
 </script>

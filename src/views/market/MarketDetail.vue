@@ -54,7 +54,7 @@
               <tr>
                 <td class="text-left">涨幅</td>
                 <td class="text-right">
-                  <stock-details :value="tickData.ratio" boundary="0" unit="%" :prefix="true" modal="normal"/>
+                  <stock-details :value="tickData.ratio" boundary="0" unit="%" :prefix="true" modal="normal" />
                 </td>
                 <td class="text-left">金额</td>
                 <td class="text-right">{{tickData.amount}}</td>
@@ -75,6 +75,10 @@
         </div>
       </div>
     </div>
+    <div class="page-footer">
+      <div class="add-to-myStock" @click="operate">{{ tickData.is_user_code == 1 ? '删自选' : '加自选' }}</div>
+      <div class="trade" @click="navigateTo">交易</div>
+    </div>
   </view-box>
 </template>
 <script>
@@ -82,6 +86,7 @@ import ajax from '../../plugins/ajax'
 import { ViewBox, XHeader, Tab, TabItem, XTable } from 'vux'
 import { baseUtil } from '../../util'
 import StockDetails from '../../components/StockDetails'
+import { user } from '../../model/storage'
 export default {
   data () {
     return {
@@ -99,18 +104,26 @@ export default {
   mounted () {
     const vm = this
     vm.requestData()
+    if (vm.timer !== 0) {
+      clearInterval(vm.timer)
+    }
     this.timer = setInterval(() => {
       vm.requestData()
     }, 10000)
   },
-  destroyed() {
+  destroyed () {
     const vm = this
     clearInterval(vm.timer)
   },
   methods: {
+    navigateTo () {
+      const url = `/trade/buy?code=${this.code}`
+      this.$router.push(url)
+    },
     requestData () {
       const param = {
-        code: this.code
+        code: this.code,
+        is_has_collect: 1,
       }
       ajax.M_LAST_TICK({
         param,
@@ -149,7 +162,36 @@ export default {
           }
         }
       })
-    }
+    },
+    operate () {
+      const vm =  this
+      const userInfo = user.read()
+      const type = vm.tickData.is_user_code == 1 ? 0 : 1
+      if (!userInfo) {
+        this.$router.push(`/login/userLogin`)
+      } else {
+        const param = {
+          code: vm.code,
+          is_collect: type
+          // user_access_token: userInfo.token
+        }
+        ajax.DO_USER_CODE({
+          param,
+          success: (res) => {
+            if (vm.tickData.is_user_code == 1) {
+              vm.tickData.is_user_code = 0
+            } else {
+              vm.tickData.is_user_code = 1
+            }
+            // baseUtil.merge(item, copyOfItem)
+            vm.$vux.toast.show({
+              text: res.msg,
+              type: 'text'
+            })
+          }
+        })
+      }
+    },
   },
   deactivated () {
     clearInterval(this.timer)
@@ -216,6 +258,30 @@ img {
   .text-left {
     padding-left: 15px;
     text-align: left;
+  }
+}
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 42px;
+  display: flex;
+  background-color: #fff;
+  .add-to-myStock,
+  .trade {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+    text-align: center;
+  }
+  .add-to-myStock {
+    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  .trade {
+    background-color: #ea3939;
+    color: #fff;
   }
 }
 </style>

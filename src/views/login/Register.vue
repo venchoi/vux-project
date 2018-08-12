@@ -9,14 +9,14 @@
         <img slot="right-full-height" :src="imgCodeUrl" @click="changeImg">
       </x-input>
       <x-input title="发送验证码" class="weui-vcode" v-model="mobile_check_code">
-        <x-button slot="right" type="primary" mini @click.native="sendSms">发送验证码</x-button>
+        <x-button slot="right" type="primary" mini @click.native="sendSms" style="background: #EA3939;color:#fff">发送验证码</x-button>
       </x-input>
-      <!-- <x-input v-if="type === 'register'" title="推荐码" type="password" v-model="inivte_code"></x-input> -->
+      <x-input v-if="type === 'register'" title="推荐码" type="password" v-model="inivte_code" :disabled="!inviteFillable"></x-input>
       <x-input title="登录密码" type="password" v-model="password"></x-input>
     </group>
     <div class="button-container">
       <div class="button">
-        <x-button @click.native="submit">{{ buttonTxt }}</x-button>
+        <x-button @click.native="submit" style="background: #EA3939;color:#fff">{{ buttonTxt }}</x-button>
       </div>
     </div>
     <toast ref="toast" :type="toustType" :time="1500">{{toustTxt}}</toast>
@@ -28,7 +28,7 @@ import { user } from '../../model/storage'
 import ajax from '../../plugins/ajax'
 import { setTimeout } from 'timers';
 export default {
-  data() {
+  data () {
     return {
       type: this.$route.params.type,
       title: '',
@@ -41,11 +41,21 @@ export default {
       check_code_id: '',
       check_code: '',
       toustTxt: '',
-      toustType: ''
+      toustType: '',
+      inviteFillable: true
     }
   },
-  mounted() {
+  mounted () {
     // const vm = this
+    const hash = location.hash
+    const param = hash.split('?')
+    if (param.length > 1) {
+      const inivte_code = param[1].split('=')
+      if (inivte_code.length > 1) {
+       this.inivte_code = inivte_code[1]
+       this.inviteFillable = false
+      }
+    }
     const type = this.$route.params.type
     if (type === 'register') {
       this.title = '注册'
@@ -58,7 +68,7 @@ export default {
     this.changeImg()
   },
   methods: {
-    submit() {
+    submit () {
       const vm = this
       const type = vm.type
       const mobile = String(this.mobile).replace(/\s/g, '')
@@ -98,7 +108,7 @@ export default {
             }
             // this.$refs.toast.show = true
           },
-          fail(res) {
+          fail (res) {
             this.$vux.toast.text(res.msg, 'middle')
           }
         })
@@ -106,7 +116,7 @@ export default {
       if (type === 'forget') {
       }
     },
-    sendSms() {
+    sendSms () {
       const vm = this
       const mobile = String(this.mobile).replace(/\s/g, '')
       const param = {
@@ -131,7 +141,7 @@ export default {
         }
       })
     },
-    changeImg() {
+    changeImg () {
       ajax.GET_IMG_CODE({
         success: (res) => {
           this.imgCodeUrl = `http://${res.data.img_url}`
