@@ -108,7 +108,6 @@ export default {
   },
   methods: {
     changeBank(value) {
-      console.log(value);
     },
     getName(value) {
       return value2name(value, ChinaAddressData);

@@ -237,6 +237,7 @@ export default {
       step: 0,
       fillable: false,
       totalAmount: 0,
+      limit: false,
 
       priceType: 1
       // sell
@@ -461,11 +462,16 @@ export default {
             text: res.msg,
             type: "text"
           });
+          this.limit = false
+        },
+        fail: () => {
+          this.limit = false
         }
       });
     },
     buy() {
-      if (this.code && this.code.length > 0) {
+      if (this.code && this.code.length > 0 && ! this.limit) {
+        this.limit = true
         const vm = this;
         const poundage = rate.read().trade_buy_open_rate;
         const servicePrice = Number(vm.volume) * poundage;
@@ -485,6 +491,9 @@ export default {
           content,
           onConfirm: () => {
             vm.openOrder();
+          },
+          onCancel: () => {
+            this.limit = false
           }
         });
       } else {
@@ -492,6 +501,7 @@ export default {
           text: "请输入正确的期权代码",
           type: "text"
         });
+        this.limit = false
       }
     },
     codeChange() { },

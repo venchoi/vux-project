@@ -67,7 +67,6 @@ export default {
     const vm = this;
     vm.requestData();
     if (vm.timer !== 0) {
-      console.log('clearInterval')
       clearInterval(vm.timer)
     }
     vm.timer = setInterval(vm.requestData, 10000);

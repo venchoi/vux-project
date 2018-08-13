@@ -170,7 +170,8 @@ export default {
       fillable: false,
       openInterest: 0,
       tickData: {},
-      maxSellCount: 0
+      maxSellCount: 0,
+      limit: false,
     }
   },
   watch: {
@@ -233,10 +234,8 @@ export default {
       this.sellPrice = Number(price)
     },
     changeCode(item) {
-      console.log(item)
     },
     priceChange() {
-      console.log('change')
     },
     requestCode() {
       const param = {
@@ -315,11 +314,16 @@ export default {
             text: res.msg,
             type: 'text'
           })
+          this.limit = false
+        },
+        fail: () => {
+          this.limit = false
         }
       })
     },
     sell() {
-      if (this.code.length > 0) {
+      if (this.code.length > 0 && !this.limit) {
+        this.limit = true
         const vm = this
         const servicePrice = Number(vm.volume) * 10
         const price = vm.priceType === 1 ? '市价' : vm.price
@@ -336,6 +340,9 @@ export default {
           content,
           onConfirm: () => {
             vm.closeOrder()
+          },
+          onCancel: () => {
+            this.limit = false
           }
         })
       } else {
@@ -343,6 +350,7 @@ export default {
           text: '请输入正确的期权代码',
           type: 'text'
         })
+        this.limit = false
       }
     },
   },
